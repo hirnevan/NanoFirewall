@@ -1,0 +1,69 @@
+# Installer Project
+
+This installer project is designed for deploying the NanoFirewall. It relies on git submodules connected to the system app and the web app. README files for the submodules can be found in their respective directories.
+
+For a full installtion, use install_all.sh
+For individual components, use respective scripts. These include things like installing dependencies, building the web-app, and building the system-app. The install_all.sh command *should* work on a fresh operating system install.
+
+The nginx config file to use with "npm start" for development is ./setup_nginx_for_dev.sh
+The nginx config file to use for production (uses /var/www/nanofirewall/html) is ./setup_nginx_for_release.sh
+The install_all script uses the production configuration file.
+
+To download the installer, use the command:
+`git clone --recurse-submodules https://capstone-cs.eng.utah.edu/nano-firewall/installer`
+
+# Build Environment
+- This software is designed to be ran on a FriendlyARM NanoPi R2S (http://wiki.friendlyarm.com/wiki/index.php/NanoPi_R2S) using the included FriendlyCore Linux distribution (based on UbuntuCore 18.04)
+- The software was written in a way that it *should* work on any Debian based Linux environment that is configured with two Ethernet interfaces. By default, the config file uses "enp0s8" as the LAN interface and "enp0s3" as the WAN interface. The config.json in system-app will need to be updated accordingly for different interface names, such as eth0 or eth1. However, we make no guarentees for environments other than the NanoPi R2S.
+- The install_dependencies script should install all necessary libraries and dependencies needed to fully build this project from a clean FriendlyCore Linux install. A list of these are found in the subsequent section.
+
+# Libraries and dependencies
+- Build Essentials (build-essential)
+- Restbed (librestbed-dev)
+- PCAP (libpcap-dev)
+- cmake
+- OpenSSL (openssl, libssl-dev)
+- NGINX (nginx) 
+- Node Package Manager (npm) 
+- CURL (libcurl4-gnutls-dev)
+- MaxMind DB C Library (libmaxminddb-dev)
+- libtins (included as a git submodule)
+- GeoLite2PP (included in system-app)
+- base64.hpp from WebSocket++ (included in system-app)
+- VirusTotal Public API v2 (External API, no install required)
+- React (included in web-app, various addons in package.json)
+
+# Feature List
+| Rank | Feature                                                                                                                    | Status                                                                                                             | Contributer(s)         | Estimated LoC               | Type                                     |
+| ---- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------- | --------------------------- | ---------------------------------------- |
+|      | Initial Design Doc Features:                                                                                               |                                                                                                                    |                        |                             |                                          |
+| 1    | Allow the user to filter IP addresses.                                                                                     | Completed                                                                                                          | Tyler                  | 40                          | Gluing - libtins                         |
+| 1    | Allow the user to filter DNS requests.                                                                                     | Completed                                                                                                          | Tyler                  | 40                          | Gluing - libtins                         |
+| 1    | Allow the user to filter MAC addresses.                                                                                    | Completed                                                                                                          | Tyler                  | 40                          | Gluing - libtins                         |
+| 1    | Allow the user to filter TCP or UDP ports.                                                                                 | Completed                                                                                                          | Tyler                  | 45                          | Gluing - libtins                         |
+| 1    | Allow the user to decide between either a block and allow list for different filters.                                      | Completed                                                                                                          |                        |                             | Scratch                                  |
+| 1    | An intuitive web interface for the user to control their device settings.                                                  | Completed                                                                                                          | Hunter                 | 1800                        | Mixture of template, gluing, and scratch |
+| 1    | A login screen to access the management interface with a password                                                          | Completed                                                                                                          | Hunter, Spencer        | Spencer - 30<br>Hunter - 75 | Gluing - Restbed                         |
+| 1    | Ability to enable/disable the firewall                                                                                     | Completed                                                                                                          | Hunter, Spencer        | Spencer - 30<br>Hunter - 75 | Gluing - system calls                    |
+| 2    | Email notifications to notify the admin if a rule is triggered.                                                            | Completed                                                                                                          | Tyler                  | 175                         | Gluing - libcurl                         |
+| 2    | The option to set nicknames for separate devices on the network.                                                           | Completed                                                                                                          | Spencer                | 100                         | Scratch                                  |
+| 2    | The option to set limits for monthly data usage per device on the network.                                                 | Completed                                                                                                          | Hunter, Spencer, Tyler | Tyler - 110<br>Spencer - 100<br>Hunter - 150| Gluing - libtins                         |
+| 2    | The option to limit the amount of time (or times of day) usage per device on the network.                                  | Modified - Time filters apply to all devices rather than individually. Completed.                                  | Tyler, Hunter          | Tyler - 100<br>Hunter - 150 | Gluing - libtins                         |
+| 2    | Allow user to select from pre-compiled filter lists, such as ad block or other EasyList filter sets (https://easylist.to/) | Modified - A user cannot directly add a filter list, however can select a preset of known filter lists. Completed. | Evan, Hunter           | Tyler - 200<br>Hunter-150   | Scratch                                  |
+| 2    | User presets where the administrator can select low, medium, or high security.                                             | Completed                                                                                                          | Evan, Hunter           | Evan - 150<br>              | Scratch                                  |
+| 2    | Allow the user to filter well known protocols (HTTPS, HTTP, ICMP, FTP, etc.)                                               | Completed - HTTPS, HTTP, ICMP, FTP, IPv4, IPv6                                                                     | Tyler                  | 100                         | Gluing - libtins                         |
+| 3    | A help page to assist users with configuring the device, especially in areas which may require technical knowledge.        | Marginal - Added descriptions to each page to guide users, added detailed all inclusive help page                  | Hunter                 | 200                         | Polish                                   |
+| 3    | A smart filtering mode to scan domains and IP addresses based on notoriety in an external database (VirusTotal).           | Completed                                                                                                          | Tyler                  | 150                         | Gluing - libtins, restbed, VirusTotal    |
+| 3    | Geolocation filtering to either allow or block traffic from certain regions.                                               | Completed                                                                                                          | Spencer                | 60                          | Gluing - libtins, geolite2++             |
+| 3    | A statistics page to allow users to view important system information, such as violations or user data.                    | Completed                                                                                                          | Evan, Hunter           | 200                         | Scratch                                  |
+| 3    | A HTML page that tells the user when a site has been blocked(not working)                                                  | Completed                                                                                                          | Evan, Tyler            | 150 (complex code)          | Gluing - libtins                         |
+|      |                                                                                                                            |                                                                                                                    |                        |                             |                                          |
+|      | Features added since Design Doc:                                                                                           |                                                                                                                    |                        |                             |                                          |
+| 3    | Advanced DNS filtering                                                                                                     | Added                                                                                                              | Tyler                  | 100                         | Scratch                                  |
+| 3    | TLS filtering                                                                                                              | Added                                                                                                              | Tyler                  | 75 (complex code)           | Scratch                                  |
+| 2    | Consolidated Website Filter Page                                                                                           | Added                                                                                                              | Hunter, Tyler          | Tyler - 75<br>Hunter - 50   | Polish                                   |
+| 2    | Postman Testing Suite                                                                                                      | Added                                                                                                              | Spencer                | 1200                        | Testing                                  |
+| 2    | Ability to reboot the firewall device                                                                                      | Added                                                                                                              | Hunter, Spencer        | Spencer - 20<br>Hunter - 20 | Scratch                                  |
+| 1    | C++ Configuration Web API (WebManager)                                                                                     | Added. It was already planned but not written in Design Doc                                                        | Spencer                | 450                         | Gluing - restbed                         |
+| 1    | Ability to inspect and forward Ethernet traffic between two interfaces (EthManager and generalized RuleObject interface)   | Added. It was already planned but not written in Design Doc                                                        | Tyler                  | 275                         | Gluing - libtins                         |
+| 1    | Persistance of configuration file (ConfigManager)                                                                          | Added. It was already planned but not written in Design Doc                                                        | Evan                   | 500                         | Gluing - JSON and system calls           |

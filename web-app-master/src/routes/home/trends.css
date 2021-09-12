@@ -1,0 +1,84 @@
+.coolContainer {
+    background-color: #FFFFFF;
+    border: 1px solid #DFE0EB;
+    border-radius: 4px;
+    cursor: 'pointer';
+}
+.graphContainer {
+    margin-top: 24px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 24px;
+    width: '100%';
+    font-size: small;
+    height: 600px;
+  
+}
+.graphSection {
+    padding: 24px
+}
+.graphSubtitle {
+   
+    font-size: 12;
+    line-height: 16px;
+    letter-spacing: 0.1;
+    color: #DFE0EB;
+    margin-top: 4px;
+    margin-right: 8px
+}
+.graphTitle {
+    font-weight: 'bold';
+    font-size: 19;
+    line-height: 24px;
+    letter-spacing: 0.4;
+    color: #373a47;
+}
+.legendTitle {
+    font-size: 12;
+    line-height: 16px;
+    letter-spacing: 0.1;
+    font-weight: '600';
+    color: #DFE0EB;
+    margin-left: 8px;
+}
+.separator {
+    background-color: #DFE0EB;
+    width: 1px;
+    min-width: 1;
+}
+.statContainer {
+    border-bottom: 1px solid #DFE0EB;
+    padding: 24px, 32px, 24px, 32px;
+    height: calc(114px - 48px);
+    margin-right: '50px';
+    margin-top: '50px';
+
+        
+    
+}
+stat-container:last-child
+{
+    border: 'none';
+}
+.stats {
+    border-top: 1px solid #DFE0EB;
+    width: '100%';
+}
+.stat-title {
+    font-weight: 600;
+    font-size: 16;
+    line-height: 22px;
+    letter-spacing: 0.3px;
+    text-align: 'center';
+    color: #DFE0EB;
+    white-space: 'nowrap';
+    margin-bottom: 6px;
+}
+.statValue {
+    font-weight: 'bold';
+    font-size: 24;
+    line-height: '30px';
+    letter-spacing: 0.3;
+    text-align: 'center';
+    color: #373a47;
+}

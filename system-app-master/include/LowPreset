@@ -1,0 +1,4 @@
+./include/PrecompiledFilters/DataTrackers
+./include/PrecompiledFilters/EmailTrackers
+./include/PrecompiledFilters/GoogleShopping
+./include/PrecompiledFilters/Reporting

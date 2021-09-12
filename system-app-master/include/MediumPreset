@@ -1,0 +1,9 @@
+./include/PrecompiledFilters/DataTrackers
+./include/PrecompiledFilters/EmailTrackers
+./include/PrecompiledFilters/GameMarketing
+./include/PrecompiledFilters/GeneralMarketing
+./include/PrecompiledFilters/GoogleShopping
+./include/PrecompiledFilters/MarketingTrackers
+./include/PrecompiledFilters/Reporting
+./include/PrecompiledFilters/HighRiskIPs
+./include/PrecompiledFilters/Proxies

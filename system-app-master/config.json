@@ -1,0 +1,168 @@
+{
+	"AUTH": "YWRtaW46cGFzcw==",
+	"EMAIL": "",
+	"EMAIL_SECS": 3600.0,
+	"HOST": "127.0.0.1",
+	"LAN": "enp0s8",
+	"NICKNAME_DICT": {
+	},
+	"TOTAL_PACKETS": 0,
+	"VIOLATION_DAY": 0,
+	"VIOLATION_WEEK": [
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0
+	],
+	"VT_API_KEY": "",
+	"WAN": "enp0s3",
+	"httpEnabled": true,
+	"ruleList": [
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "ip",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "dns",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "advdns",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "protocol",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": true,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "mac",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": true,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "data",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "smart",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "time",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "geolocation",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "port",
+			"report": false
+		},
+		{
+			"action": "add",
+			"block": true,
+			"deviceBlockList": false,
+			"deviceList": [
+			],
+			"enabled": false,
+			"filterBlockList": true,
+			"filterList": [
+			],
+			"name": "tls",
+			"report": false
+		}
+	]
+}

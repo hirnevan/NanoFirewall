@@ -1,0 +1,40 @@
+.col
+{
+    background-color: #FFFFFF;
+    border: 1px solid #DFE0EB;
+    border-radius: 4px;
+    cursor: pointer;
+    width: auto;
+    justify-content: space-between;
+    padding: 16px 32px 16px 32px;
+
+}
+.comsm
+{
+    justify-content: space-between;
+}
+.row
+{
+    margin-bottom: 8px;
+}
+
+.customButton
+{
+    padding: 10px;
+    font-size: 16px;
+    margin: 10px;
+    margin-right: 0px;
+    background-color: #0066FF;
+    color: #FFF;
+    border: 2px solid #0066FF;
+}
+
+.help
+{
+    color: #8E1600;
+    font-size: small;
+}
+.spacer
+{
+    flex-grow: 1;
+}

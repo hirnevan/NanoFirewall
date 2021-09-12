@@ -1,0 +1,5024 @@
+{
+	"info": {
+		"_postman_id": "8297fc0e-b205-46c9-bdd6-0f02d0f0a27d",
+		"name": "NanoFirewall Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Test DNS PATCH",
+			"item": [
+				{
+					"name": "Verify can access utah.edu",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"postman.setNextRequest('Verify utah.edu not currently in DNS');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "utah.edu",
+							"host": [
+								"utah",
+								"edu"
+							]
+						},
+						"description": "Test GET for list of DNS filters."
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify utah.edu not currently in DNS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect no DNS filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.not.includes('utah.edu');",
+									"});",
+									"",
+									"postman.setNextRequest('Send DNS PATCH to add utah.edu');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "192.168.2.151/rule?name=dns",
+							"host": [
+								"192",
+								"168",
+								"2",
+								"151"
+							],
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "dns"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send DNS PATCH to add utah.edu",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify utah.edu was added to DNS');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"action\": \"add\",\n        \"enabled\": true,\n        \"filterList\": [\n            \"utah.edu\",\n            \"www.utah.edu\"\n        ],\n        \"name\":\"dns\",\n        \"report\": true\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule?name=dns",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "dns"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify utah.edu was added to DNS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new DNS filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.includes('utah.edu');",
+									"});",
+									"pm.test(\"Expect new device removed\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rule.deviceList).to.includes('test');",
+									"});",
+									"postman.setNextRequest('Send DNS PATCH to remove utah.edu');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "192.168.2.151/rule?name=dns",
+							"host": [
+								"192",
+								"168",
+								"2",
+								"151"
+							],
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "dns"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send DNS PATCH to remove utah.edu",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify utah.edu was removed from DNS');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"test\"],\n        \"action\": \"del\",\n        \"enabled\": true,\n        \"filterList\": [\n            \"utah.edu\",\n            \"www.utah.edu\"\n        ],\n        \"name\":\"dns\",\n        \"report\": true\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "192.168.2.151/rule?name=dns",
+							"host": [
+								"192",
+								"168",
+								"2",
+								"151"
+							],
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "dns"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify utah.edu was removed from DNS",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new DNS filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).not.includes('utah.edu');",
+									"});",
+									"pm.test(\"Expect new device\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rule.deviceList).not.includes('test');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "192.168.2.151/rule?name=dns",
+							"host": [
+								"192",
+								"168",
+								"2",
+								"151"
+							],
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "dns"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test IP PATCH",
+			"item": [
+				{
+					"name": "Verify can access 129.123.54.210",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 129.123.54.210 not currently in IP');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "129.123.54.210",
+							"host": [
+								"129",
+								"123",
+								"54",
+								"210"
+							]
+						},
+						"description": "Test GET for list of DNS filters."
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 129.123.54.210 not currently in IP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect no IP filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.not.includes('129.123.54.210');",
+									"});",
+									"",
+									"postman.setNextRequest('Send IP PATCH to add 129.123.54.210');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=ip",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "ip"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send IP PATCH to add 129.123.54.210",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 129.123.54.210 was added to IP');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"deviceBlockList\":true,\n        \"filterBlockList\": true,\n        \"deviceList\": [\"08:00:27:14:c8:bf\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"129.123.54.210\"\n        ],\n        \"name\":\"ip\",\n        \"report\": true\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 129.123.54.210 was added to IP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new IP filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.includes('129.123.54.210');",
+									"});",
+									"pm.test(\"Expect new device\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rule.deviceList).to.includes('test');",
+									"});",
+									"postman.setNextRequest('Send IP PATCH to remove 129.123.54.210');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=ip",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "ip"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send IP PATCH to remove 129.123.54.210",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 129.123.54.210 was removed');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"deviceBlockList\": true,\n        \"filterBlockList\":true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"129.123.54.210\"\n        ],\n        \"name\":\"ip\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 129.123.54.210 was removed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new IP filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).not.includes('129.123.54.210');",
+									"});",
+									"pm.test(\"Expect new device\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rule.deviceList).not.includes('test');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "192.168.2.151/rule?name=ip",
+							"host": [
+								"192",
+								"168",
+								"2",
+								"151"
+							],
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "ip"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test MAC PATCH",
+			"item": [
+				{
+					"name": "Verify our device can connect to internet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 08:00:27:3b:53:34 not currently in MAC');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "utah.edu",
+							"host": [
+								"utah",
+								"edu"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 08:00:27:3b:53:34 not currently in MAC ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect no MAC filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.not.includes('08:00:27:3b:53:34');",
+									"});",
+									"",
+									"postman.setNextRequest('Send MAC PATCH to add 08:00:27:3b:53:34');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=mac",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "mac"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send MAC PATCH to add 08:00:27:3b:53:34",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 08:00:27:3b:53:34 was added to MAC');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"test\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"08:00:27:3b:53:34\"\n        ],\n        \"name\":\"mac\",\n        \"report\": true\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send MAC PATCH to add invalid mac address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is invalid address\", function () {",
+									"    pm.response.to.have.body(\"error: invalid address\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"test\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"70g:00:27:3b:53:34\"\n        ],\n        \"name\":\"mac\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 08:00:27:3b:53:34 was added to MAC",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new MAC filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.includes('08:00:27:3b:53:34');",
+									"});",
+									"",
+									"postman.setNextRequest('Send MAC PATCH to remove 08:00:27:3b:53:34');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=mac",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "mac"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send MAC PATCH to remove 08:00:27:3b:53:34",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 08:00:27:3b:53:34 was removed');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"test\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"08:00:27:3b:53:34\"\n        ],\n        \"name\":\"mac\",\n        \"report\": true\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule?name=dns",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "dns"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 08:00:27:3b:53:34 was removed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new MAC filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).not.includes('08:00:27:3b:53:34');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=mac",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "mac"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test PORT PATCH",
+			"item": [
+				{
+					"name": "Verify can access web page",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 443 not currently in PORT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect no PORT filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.not.includes('443');",
+									"});",
+									"",
+									"postman.setNextRequest('Send PORT PATCH to add 443');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=port",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "port"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send PORT PATCH to add 443",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 443 was added to PORT');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"443\"\n        ],\n        \"name\":\"port\",\n        \"report\": true\n    }\n}\n"
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 443 was added to PORT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new PORT filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.includes('443');",
+									"});",
+									"",
+									"postman.setNextRequest('Send PORT PATCH to remove 443');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=port",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "port"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Send PORT PATCH to remove 443",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									"",
+									"postman.setNextRequest('Verify 443 was removed');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"test\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"443\"\n        ],\n        \"name\":\"port\",\n        \"report\": true\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Verify 443 was removed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Expect new PORT filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).not.includes('443');",
+									"});",
+									"pm.test(\"Expect new device\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rule.deviceList).not.includes('test');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=port",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "port"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "localhost Tests",
+			"item": [
+				{
+					"name": "DNS POST",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [],\n        \"enabled\": true,\n        \"action\":\"add\",\n        \"filterList\": [\n            \"utah.edu\",\n            \"www.utah.edu\"\n        ],\n        \"name\":\"dns\",\n        \"report\": true\n    }\n}\n"
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "DNS GET",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "MAC GET",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:1984/rule?name=mac",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "mac"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "MAC POST",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [],\n        \"enabled\": true,\n        \"action\":\"add\",\n        \"filterList\": [\n            \"00:A0:C9:14:C8:29\"\n        ],\n        \"name\":\"mac\",\n        \"report\": true\n    }\n}"
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "PORT POST",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [],\n        \"enabled\": true,\n        \"action\":\"add\",\n        \"filterList\": [\n            \"23\"\n        ],\n        \"name\":\"port\",\n        \"report\": true\n    }\n}"
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "PORT GET",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=port",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "port"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test Preset POST",
+			"item": [
+				{
+					"name": "Test POST, switching to low preset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid JSON response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"preset\":\"low\"\n   \"action\":\"\"\n   \"fileName\":\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test accessing website not in preset--facebook",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test accessing website in preset --flurry.com",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Inalid response\", function () {",
+									"    pm.response.not.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "74.6.136.150",
+							"host": [
+								"74",
+								"6",
+								"136",
+								"150"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test POST, add file to low preset",
+					"request": {
+						"method": "POST",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test accessing website in added file",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test POST, delete file from low preset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid JSON response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"preset\":\"low\"\n   \"action\":\"delete\"\n   \"fileName\":\"Facebook\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test accessing website in deleted file",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Post, switching to Medium preset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid JSON response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"preset\":\"medium\"\n   \"action\":\"\"\n   \"fileName\":\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test accessing website in medium preset --brealtime.com",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Post, switching to high preset",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"preset\":\"high\"\n   \"action\":\"\"\n   \"fileName\":\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test accessing website in high preset --outbrain.com",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Post, switching to None preset",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid JSON response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"preset\":\"none\"\n   \"action\":\"\"\n   \"fileName\":\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Accessing website in low preset -flurry.com",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Invalid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "74.6.136.150",
+							"host": [
+								"74",
+								"6",
+								"136",
+								"150"
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test Settings PATCH",
+			"item": [
+				{
+					"name": "Actions",
+					"item": [
+						{
+							"name": "Test GET Settings",
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Send IP PATCH to add 129.123.54.210",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											"",
+											"pm.test(\"Message is success\", function () {",
+											"    pm.response.to.have.body(\"success\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"129.123.54.210\"\n        ],\n        \"name\":\"ip\",\n        \"report\": true\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/rule",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"rule"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify can't access 129.123.54.210",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.not.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "129.123.54.210",
+									"host": [
+										"129",
+										"123",
+										"54",
+										"210"
+									]
+								},
+								"description": "Test GET for list of DNS filters."
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Test Patch - disable firewall",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"action\": \"disable\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify can access 129.123.54.210",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "129.123.54.210",
+									"host": [
+										"129",
+										"123",
+										"54",
+										"210"
+									]
+								},
+								"description": "Test GET for list of DNS filters."
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify Firewall Disabled",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid JSON response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.have.body(\"Stopped\")",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/status",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"status"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Test Patch - enable Firewall",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"action\":\"enable\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify can't access 129.123.54.210 Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.not.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "129.123.54.210",
+									"host": [
+										"129",
+										"123",
+										"54",
+										"210"
+									]
+								},
+								"description": "Test GET for list of DNS filters."
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify Firewall Enabled",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid JSON response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.have.body(\"Running\")",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "IP Patch to delete 129.123.54.210",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											"",
+											"pm.test(\"Message is success\", function () {",
+											"    pm.response.to.have.body(\"success\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"129.123.54.210\"\n        ],\n        \"name\":\"ip\",\n        \"report\": true\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/rule",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"rule"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Test Patch - Restart",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"action\": \"restart\"\n}"
+								},
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						}
+					]
+				},
+				{
+					"name": "Network Settings -LAN/WAN/HOST",
+					"item": [
+						{
+							"name": "Test Patch -update WAN",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Invalid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"wan\": \"enp0s8\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify Wan Updated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											"",
+											"pm.test(\"Expect updated WAN\", function () {",
+											"   let jsonData = pm.response.json();",
+											"",
+											"    pm.expect(jsonData.wan).to.be(\"enp0s8\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Test Patch - update LAN",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Invalid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"lan\": \"enp0s3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify LAN updated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											"",
+											"pm.test(\"Expect updated LAN\", function () {",
+											"   let jsonData = pm.response.json();",
+											"",
+											"    pm.expect(jsonData.lan).to.be(\"enp0s3\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Test Patch - update host",
+							"request": {
+								"method": "PATCH",
+								"header": [
+								],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify host updated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											"",
+											"pm.test(\"Expect updated Host\", function () {",
+											"   let jsonData = pm.response.json();",
+											"",
+											"    pm.expect(jsonData.host).to.be(\"127.0.0.2\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						}
+					]
+				},
+				{
+					"name": "Email Settings",
+					"item": [
+						{
+							"name": "Test Get - stored Email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Expect default email\", function () {",
+											"   let jsonData = pm.response.json();",
+											"",
+											"    pm.expect(jsonData.storedEmail).to.includes('');",
+											"});",
+											"pm.test(\"Expect default emailTime\", function () {",
+											"   let jsonData = pm.response.json();",
+											"",
+											"    pm.expect(jsonData.storedEmail).to.includes(3600);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Test Patch - update email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"storedEmail\" : \"Spencerc1234@yahoo.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify storedEmail updated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Expect new email\", function () {",
+											"   let jsonData = pm.response.json();",
+											"",
+											"    pm.expect(jsonData.storedEmail).to.includes('Spencerc1234@yahoo.com');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Test Patch - minEmailTime",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"minEmailTime\": 60\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify minEmailTime updated",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Expect new time\", function () {",
+											"   let jsonData = pm.response.json();",
+											"",
+											"    pm.expect(jsonData.minEmailTime).to.includes(60);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": "localhost:1984/settings",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"settings"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Add ip rules to break so we will get an email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Valid response\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.ok;",
+											"});",
+											"",
+											"pm.test(\"Message is success\", function () {",
+											"    pm.response.to.have.body(\"success\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"129.123.54.210\"\n        ],\n        \"name\":\"ip\",\n        \"report\": true\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:1984/rule",
+									"host": [
+										"localhost"
+									],
+									"port": "1984",
+									"path": [
+										"rule"
+									]
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Breaking the rule",
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Changing ip rule reporting to false",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [],\n        \"filterList\": [\n        ],\n        \"name\":\"ip\",\n        \"report\": false\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Breaking the rule again",
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Removing the ip rule",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "admin",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "pass",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"129.123.54.210\"\n        ],\n        \"name\":\"ip\",\n        \"report\": true\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						}
+					]
+				},
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Test Patch - update auth -- changed to base admin:newpass",
+							"request": {
+								"method": "PATCH",
+								"header": [
+								],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify Auth Updated",
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						},
+						{
+							"name": "Verify we block old auth",
+							"request": {
+								"method": "GET",
+								"header": [
+								],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Test DataLimits PATCH",
+			"item": [
+				{
+					"name": "Test Patch, Adding data limits",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"1\"\n        ],\n        \"name\":\"datalimit\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Get, retrieving data limits",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Go on youtube and watch a video or somethign to Exceed data limit",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Once data limit exceeded, query some website",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Patch, deleting data limits",
+					"request": {
+						"method": "PATCH",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Get, verify data limit deleted",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Query some website",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test TimeLimits Patch",
+			"item": [
+				{
+					"name": "Test Patch, adding time limit we will violate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"Start: 01:00\", \"End: 02:00\"\n        ],\n        \"name\":\"timeLimit\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Get, verify limits added",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Query a website, ensure it's blocked",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Patch, deleting time limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"deviceBlockList\": true,\n        \"filterBlockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"Start: 01:00\", \"End: 02:00\"\n        ],\n        \"name\":\"timeLimit\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Get, verify limit deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Expect new time limit filter\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.not.includes(\"Start: 01:00\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=timeLimits",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "timeLimits"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Patch, add a limit we won't violate",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"Start: 22:00\", \"End: 23:00\"\n        ],\n        \"name\":\"timeLimit\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Query some website, verify we can access",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Test Patch, delete this time limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\"70:85:c2:dd:86:94\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"Start: 22:00\", \"End: 23:00\"\n        ],\n        \"name\":\"timeLimit\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test Nicknames",
+			"item": [
+				{
+					"name": "Patch - Add ip filter for mac address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Message is success\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"deviceBlockList\":true,\n        \"filterBlockList\": true,\n        \"deviceList\": [\"08:00:27:b3:0e:9f\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"129.123.54.210\"\n        ],\n        \"name\":\"ip\",\n        \"report\": true\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - add nickname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Valid body\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"name\": \"somasdf\",\n\"value\": \"c0:a0:0d:b4:99:8c\",\n\"action\": \"add\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/nickname",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"nickname"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ensure nickname added",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ensure nickname updated in ip rule",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Reassign Nickname",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Replace nickname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Valid body\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"name\": \"somasdf2\",\n\"value\": \"c0:a0:0d:b4:99:8c\",\n\"action\": \"add\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/nickname",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"nickname"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ensure nickname updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Expect new nickname\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.deviceList).to.contains(\"somasdf2\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=ip",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "ip"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Add Rule using nickname",
+					"request": {
+						"method": "PATCH",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Delete rule by nickname",
+					"request": {
+						"method": "PATCH",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Remove Nickname",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"name\": \"somasdf2\",\n\"value\": \"c0:a0:0d:b4:99:8c\",\n\"action\": \"del\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ensure nickname removed in ip rule",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Expect new nickname\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.deviceList).to.not.contains(\"somasdf2\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=ip",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "ip"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test SmartFiltering",
+			"item": [
+				{
+					"name": "Patch - Enable Smart Filtering",
+					"request": {
+						"method": "PATCH",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Examine status of smart filtering",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Expect rule enabled\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.enabled).to.contain(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=smart",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "smart"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ping Suspect Website",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Disable Smart Filtering",
+					"request": {
+						"method": "PATCH",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ensure Smart Filtering Disabled",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test Website Filtering",
+			"item": [
+				{
+					"name": "Patch - Add Facebook",
+					"request": {
+						"method": "PATCH",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Verify Facebook Added",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=website",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "website"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ping facebook",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Remove Facebook",
+					"request": {
+						"method": "PATCH",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Verify Facebook removed",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=website",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "website"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Test GeoLocationFiltering",
+			"item": [
+				{
+					"name": "Patch - Add China to GeoLocation Filtering",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"deviceBlockList\":true,\n        \"filterBlockList\": true,\n        \"deviceList\": [\"c0:a0:0d:b4:99:8c\"],\n        \"enabled\": true,\n        \"action\": \"add\",\n        \"filterList\": [\n            \"CN\"\n        ],\n        \"name\":\"GeoLocation\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ensure china added ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Expect new filter item\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.contains(\"CN\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=geolocation",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "geolocation"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ping some chinese website",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Disable Geolocation filtering",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Valid body\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"deviceBlockList\":true,\n        \"filterBlockList\": true,\n        \"deviceList\": [\"c0:a0:0d:b4:99:8c\"],\n        \"enabled\": false,\n        \"name\":\"geolocation\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Ping same chinese website",
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Patch - Delete China from Geolocation filtering",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Valid body\", function () {",
+									"    pm.response.to.have.body(\"success\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "pass",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"deviceBlockList\":true,\n        \"filterBlockList\": true,\n        \"deviceList\": [\"c0:a0:0d:b4:99:8c\"],\n        \"enabled\": true,\n        \"action\": \"del\",\n        \"filterList\": [\n            \"CN\"\n        ],\n        \"name\":\"geolocation\",\n        \"report\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:1984/rule",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							]
+						}
+					},
+					"response": [
+					]
+				},
+				{
+					"name": "Get - Verify china removed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Valid response\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Expect no filter item\", function () {",
+									"   let jsonData = pm.response.json();",
+									"",
+									"    pm.expect(jsonData.rule.filterList).to.not.contains(\"CN\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+						],
+						"url": {
+							"raw": "localhost:1984/rule?name=geolocation",
+							"host": [
+								"localhost"
+							],
+							"port": "1984",
+							"path": [
+								"rule"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "geolocation"
+								}
+							]
+						}
+					},
+					"response": [
+					]
+				}
+			]
+		},
+		{
+			"name": "Settings: Test missing setting object",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+				],
+				"url": {
+					"raw": "localhost:1984/settings",
+					"host": [
+						"localhost"
+					],
+					"port": "1984",
+					"path": [
+						"settings"
+					]
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Settings Patch - Test invalid json",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+				],
+				"url": {
+					"raw": "localhost:1984/settings",
+					"host": [
+						"localhost"
+					],
+					"port": "1984",
+					"path": [
+						"settings"
+					]
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test Invalid POST (Not JSON)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Valid response\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Message is error\", function () {",
+							"    pm.response.to.have.body(\"error: invalid json\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "This is something other than JSON."
+				},
+				"url": {
+					"raw": "192.168.2.151/rule",
+					"host": [
+						"192",
+						"168",
+						"2",
+						"151"
+					],
+					"path": [
+						"rule"
+					]
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test Invalid POST (Missing rule)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Valid response\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Message is error\", function () {",
+							"    pm.response.to.have.body(\"error: Missing rule object\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "192.168.2.151/rule",
+					"host": [
+						"192",
+						"168",
+						"2",
+						"151"
+					],
+					"path": [
+						"rule"
+					]
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test Invalid POST (Missing parameters)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Valid response\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Message is error\", function () {",
+							"    pm.response.to.have.body(\"error: missing required parameters\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "pass",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"rule\": {\n        \"block\": true,\n        \"blockList\": true,\n        \"deviceList\": [\n            \"00:11:22:33:44:55\"\n        ],\n        \"filterList\": [\n            \"utah.edu\",\n            \"www.utah.edu\"\n        ],\n        \"report\": true\n    }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:1984/rule",
+					"host": [
+						"localhost"
+					],
+					"port": "1984",
+					"path": [
+						"rule"
+					]
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test Bad Auth",
+			"request": {
+				"method": "GET",
+				"header": [
+				],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test ServerStatus GET",
+			"request": {
+				"method": "GET",
+				"header": [
+				],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test GET no rulename",
+			"request": {
+				"method": "GET",
+				"header": [
+				],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test GET invalid rulename",
+			"request": {
+				"method": "GET",
+				"header": [
+				],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": [
+			]
+		},
+		{
+			"name": "Test Stats",
+			"request": {
+				"method": "GET",
+				"header": [
+				],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": [
+			]
+		}
+	]
+}

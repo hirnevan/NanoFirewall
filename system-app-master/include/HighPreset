@@ -1,0 +1,13 @@
+./include/PrecompiledFilters/AdBlock
+./include/PrecompiledFilters/Clickbait
+./include/PrecompiledFilters/DataTrackers
+./include/PrecompiledFilters/EmailTrackers
+./include/PrecompiledFilters/FacebookTrackers
+./include/PrecompiledFilters/GameMarketing
+./include/PrecompiledFilters/GeneralMarketing
+./include/PrecompiledFilters/GoogleShopping
+./include/PrecompiledFilters/MarketingTrackers
+./include/PrecompiledFilters/Reporting
+./include/PrecompiledFilters/SnapchatTrackers
+./include/PrecompiledFilters/HighRiskIPs
+./include/PrecompiledFilters/Proxies
